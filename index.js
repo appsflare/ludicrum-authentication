@@ -43,7 +43,6 @@ server.register(Vision, (err) => {
         method: 'GET',
         path: '/ping',
         handler: function (request, reply) {
-            //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             reply('pong');
         }
     });
@@ -70,22 +69,27 @@ server.register(Vision, (err) => {
         }
     });
 
-    server.register({
-        register: KongApiSyncPlugin,
-        options: {
-            sync: true,
-            apis: [{
-                name: 'Authentication',
-                strip_request_path: true,
-                request_path: '/authentication/'
-            }]
-        }
-    }, function (err, next) {
+    KongApiSyncPlugin.forEachInterface(address => {
 
-        if (err) {
-            throw err;
-        }
-        next();
+        server.register({
+            register: KongApiSyncPlugin,
+            options: {
+                upstream_url: 'http://' + address + ':' + port,
+                sync: true,
+                apis: [{
+                    name: 'Authentication',
+                    strip_request_path: true,
+                    request_path: '/authentication/'
+                }]
+            }
+        }, function (err, next) {
+
+            if (err) {
+                throw err;
+            }
+            next();
+        });
+
     });
 
     server.register({

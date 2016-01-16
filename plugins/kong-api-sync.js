@@ -7,15 +7,21 @@ const King = require('kingkong');
 const _ = require('underscore');
 const os = require('os');
 
-function getNetworkAddress(internal) {
+function getAllNetworkAddresses() {
     let ifaces = os.networkInterfaces();
+
+    return _.chain(Object.keys(ifaces))
+        .map((name)=> ifaces[name])
+        .find(face =>'IPv4' === face.family)
+        .value();
+}
+
+function getNetworkAddress(internal) {
 
     let address = '127.0.0.1';
 
-    _.chain(Object.keys(ifaces))
-        .map((name)=> ifaces[name])
-        .find(faces => {
-            var found = faces.find(face =>'IPv4' === face.family && face.internal == internal);
+    _.find(getAllNetworkAddresses(), faces => {
+        var found = faces.find(face => face.internal == internal);
             if (found !== undefined) {
                 address = found.address;
                 return true;
@@ -38,6 +44,11 @@ KongHelpers.prototype.getCustomer = function (id) {
 function kongAPISyncPlugin(server, options, next) {
 
     if (!options.upstream_url) {
+        if (!options.baseUrlResolver) {
+            options.baseUrlResolver = function () {
+
+            };
+        }
         options.upstream_url = 'http://' + getNetworkAddress(false) + ':' + (server.connections[0].settings.port || 3000);
     }
 
@@ -84,6 +95,9 @@ function kongAPISyncPlugin(server, options, next) {
 
 }
 
+exports.forEachInterface = function (callback) {
+    getAllNetworkAddresses().forEach(callback);
+};
 
 exports.register = kongAPISyncPlugin;
 exports.register.attributes = {
