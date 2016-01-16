@@ -49,7 +49,7 @@ server.register(Vision, (err) => {
 
     server.route({
         method: 'GET',
-        path: '/singup',
+        path: '/signup',
         handler: function (request, reply) {
             //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             reply.view('signup', {
@@ -60,7 +60,7 @@ server.register(Vision, (err) => {
 
     server.route({
         method: 'POST',
-        path: '/singup',
+        path: '/signup',
         handler: function (request, reply) {
             //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             reply.view('signup', {
