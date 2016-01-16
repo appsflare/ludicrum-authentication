@@ -12,7 +12,9 @@ function getAllNetworkAddresses() {
 
     return _.chain(Object.keys(ifaces))
         .map((name)=> ifaces[name])
-        .find(face =>'IPv4' === face.family)
+        .reduceRight((a, b)=>a.concat(b))
+        .filter(face =>'IPv4' === face.family)
+        .map(face=> face.address)
         .value();
 }
 
@@ -22,12 +24,12 @@ function getNetworkAddress(internal) {
 
     _.find(getAllNetworkAddresses(), faces => {
         var found = faces.find(face => face.internal == internal);
-            if (found !== undefined) {
-                address = found.address;
-                return true;
-            }
-            return false;
-        });
+        if (found !== undefined) {
+            address = found.address;
+            return true;
+        }
+        return false;
+    });
 
     return address || '127.0.0.1';
 }
@@ -99,8 +101,13 @@ exports.forEachInterface = function (callback) {
     getAllNetworkAddresses().forEach(callback);
 };
 
-exports.register = kongAPISyncPlugin;
-exports.register.attributes = {
-    name: 'kong-api-sync',
-    version: '1.0.0'
+exports.getPlugin = function (name) {
+    let plugin = function () {
+        return kongAPISyncPlugin.apply(this, arguments);
+    };
+    plugin.attributes = {
+        name: name || 'kong-api-sync',
+        version: '1.0.0'
+    };
+    return plugin;
 };

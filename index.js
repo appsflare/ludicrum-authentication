@@ -73,7 +73,7 @@ server.register(Vision, (err) => {
 
         let upstreamUrl = 'http://' + address + ':' + port;
         server.register({
-            register: KongApiSyncPlugin,
+            register: KongApiSyncPlugin.getPlugin('kong-api-' + address),
             options: {
                 upstream_url: upstreamUrl,
                 sync: true,
