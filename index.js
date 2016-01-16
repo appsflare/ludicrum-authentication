@@ -71,10 +71,11 @@ server.register(Vision, (err) => {
 
     KongApiSyncPlugin.forEachInterface(address => {
 
+        let upstreamUrl = 'http://' + address + ':' + port;
         server.register({
             register: KongApiSyncPlugin,
             options: {
-                upstream_url: 'http://' + address + ':' + port,
+                upstream_url: upstreamUrl,
                 sync: true,
                 apis: [{
                     name: 'Authentication',
@@ -85,8 +86,10 @@ server.register(Vision, (err) => {
         }, function (err, next) {
 
             if (err) {
+                console.error(err);
                 throw err;
             }
+            console.log('Registering api with upstream url: ' + upstreamUrl);
             next();
         });
 
