@@ -86,6 +86,7 @@ server.register(Vision, (err) => {
         }, function (err, next) {
 
             if (err) {
+                console.info("Registering upstream  url with kong failed, " + e);
                 console.error(err);
                 throw err;
             }
