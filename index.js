@@ -4,7 +4,7 @@
 
 'use strict';
 
-var port = process.env.APP_PORT || 4000;
+var port = process.env.PORT || 4000;
 
 const Hapi = require('hapi');
 const Vision = require('vision');
@@ -14,8 +14,13 @@ const _ = require('underscore');
 const KongApiSyncPlugin = require('./plugins/kong-api-sync');
 
 const server = new Hapi.Server();
-server.connection({port: port});
 
+//setting application port
+server.connection({
+    port: port
+});
+
+//registering view plugin
 server.register(Vision, (err) => {
 
     if (err) {
@@ -23,7 +28,9 @@ server.register(Vision, (err) => {
     }
 
     server.views({
-        engines: {ejs: Ejs},
+        engines: {
+            ejs: Ejs
+        },
         relativeTo: __dirname,
         path: 'views'
     });
@@ -32,7 +39,7 @@ server.register(Vision, (err) => {
     server.route({
         method: 'GET',
         path: '/',
-        handler: function (request, reply) {
+        handler: function(request, reply) {
             reply.view('signup', {
                 title: 'Welcome to ludicrum'
             });
@@ -42,7 +49,7 @@ server.register(Vision, (err) => {
     server.route({
         method: 'GET',
         path: '/ping',
-        handler: function (request, reply) {
+        handler: function(request, reply) {
             reply('pong');
         }
     });
@@ -50,7 +57,7 @@ server.register(Vision, (err) => {
     server.route({
         method: 'GET',
         path: '/signup',
-        handler: function (request, reply) {
+        handler: function(request, reply) {
             //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             reply.view('signup', {
                 title: 'Welcome to ludicrum'
@@ -61,7 +68,7 @@ server.register(Vision, (err) => {
     server.route({
         method: 'POST',
         path: '/signup',
-        handler: function (request, reply) {
+        handler: function(request, reply) {
             //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             reply.view('signup', {
                 title: 'Welcome to ludicrum'
@@ -69,31 +76,26 @@ server.register(Vision, (err) => {
         }
     });
 
-    KongApiSyncPlugin.forEachInterface(address => {
 
-        let upstreamUrl = 'http://' + address + ':' + port;
-        server.register({
-            register: KongApiSyncPlugin.getPlugin('kong-api-' + address),
-            options: {
-                upstream_url: upstreamUrl,
-                sync: true,
-                apis: [{
-                    name: 'Authentication',
-                    strip_request_path: true,
-                    request_path: '/authentication/'
-                }]
-            }
-        }, function (err, next) {
+    server.register({
+        register: KongApiSyncPlugin.register,
+        options: {
+            sync: true,
+            apis: [{
+                name: 'Authentication',
+                strip_request_path: true,
+                request_path: '/authentication/'
+            }]
+        }
+    }, function(err, next) {
 
-            if (err) {
-                console.info("Registering upstream  url with kong failed, " + e);
-                console.error(err);
-                throw err;
-            }
-            console.log('Registering api with upstream url: ' + upstreamUrl);
-            next();
-        });
-
+        if (err) {
+            console.info("synchronizing upstream url with kong failed, " + err);
+            console.error(err);
+            throw err;
+        }
+        console.log('Synchronized API with kong');
+        next();
     });
 
     server.register({
