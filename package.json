@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/appsflare/ludicrum-authentication#readme",
   "dependencies": {
+    "chairo": "^1.3.0",
     "ejs": "^2.3.4",
     "good": "^6.4.0",
     "good-console": "^5.2.0",

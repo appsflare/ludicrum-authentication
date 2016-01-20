@@ -4,12 +4,14 @@
 
 'use strict';
 
-var port = process.env.PORT || 4000;
+var port = config.port;
 
+const config = require('config');
 const Hapi = require('hapi');
 const Vision = require('vision');
 const Ejs = require('ejs');
 const Good = require('good');
+const chairo = require('chairo');
 const _ = require('underscore');
 const KongApiSyncPlugin = require('./plugins/kong-api-sync');
 const RegisterRoutes = require("./routes/register");
@@ -19,6 +21,18 @@ const server = new Hapi.Server();
 //setting application port
 server.connection({
     port: port
+});
+
+server.register(chairo, err => {
+    if (err) {
+        return;
+    }
+    server.seneca.client({
+        type: 'tcp',
+        host: config.mailingServiceHost,
+        port: config.mailingServicePort,
+        pin: 'role:mail'
+    });
 });
 
 //registering view plugin
@@ -35,15 +49,15 @@ server.register(Vision, (err) => {
         relativeTo: __dirname,
         path: 'views'
     });
-    
-       server.route({
+
+    server.route({
         method: 'GET',
         path: '/ping',
         handler: function(request, reply) {
             reply('pong');
         }
     });
-    
+
     RegisterRoutes.use(server);
 
     server.register({
