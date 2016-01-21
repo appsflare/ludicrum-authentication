@@ -29,13 +29,13 @@ server.register(chairo, err => {
         return;
     }
     server.seneca
-        .use('mesh', { auto:true, pin:'role:auth' })
-        .client({
+        .use('mesh', { auto:true, pin:'role:auth' });
+        /*.client({
             type: 'tcp',
             host: config.mailingServiceHost,
             port: config.mailingServicePort,
             pin: 'role:mail'
-        });
+        });*/
 });
 
 //registering view plugin
