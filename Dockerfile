@@ -1,4 +1,4 @@
-FROM nodesource/trusty-base
+FROM ubuntu:14.04
 MAINTAINER Srinath Janakiraman <me@vjsrinath.com>
 
 ENV NODE_VERSION=${NODE_VERSION:-4.3.0}
