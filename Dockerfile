@@ -15,10 +15,10 @@ RUN mkdir -p ${WORK_DIR};
 ##Setting working directory
 WORKDIR ${WORK_DIR}
 
-ONBUILD COPY package.json ./
-ONBUILD RUN npm install
+ONBUILD COPY ["package.json", "./"]
+ONBUILD RUN ls \
+        && npm install
 ONBUILD COPY . ./
 
-RUN npm install
 ENTRYPOINT ["pm2"]
 CMD ["start", "index.js"]
