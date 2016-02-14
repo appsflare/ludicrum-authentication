@@ -2,7 +2,7 @@ FROM node:4.3.0
 MAINTAINER Srinath Janakiraman <me@vjsrinath.com>
 
 ENV SERVICE_VERSION_MAJOR=1.0
-ENV SERVICE_VERSION_MINOR=1.0.1
+ENV SERVICE_VERSION_MINOR=1.0.2
 ENV WORK_DIR=/srv/www/ludicrum-authentication
 ENV PORT=4000
 ## ENV NODE_ENV
