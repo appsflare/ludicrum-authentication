@@ -66,13 +66,20 @@ exports.use = function(server) {
                         return model
                             .save()
                             .then(newAcc => {
-                                
+
                                 server
-                                .seneca
-                                .act({role:'mail',cmd:'send', from:'postmaster@appsflare.com',to:input.email},(err=>{
-                                   console.log(err); 
-                                }));
-                                
+                                    .seneca
+                                    .act({
+                                        role: 'mail',
+                                        cmd: 'send',
+                                        from: 'postmaster@appsflare.com',
+                                        to: input.email,
+                                        subject: 'Welcome to ludicrum!!!',
+                                        html: '<br> Sit tight while we setup your account for <i>awesome<i> media experience on the web'
+                                    }, (err => {
+                                        console.log(err);
+                                    }));
+
                                 reply.view('register', {
                                     title: 'Welcome to ludicrum',
                                     messages: ["Account created successfully"],

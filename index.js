@@ -29,13 +29,22 @@ server.register(chairo, err => {
         return;
     }
     server.seneca
-        .use('mesh', { auto:true, pin:'role:auth' });
-        /*.client({
-            type: 'tcp',
-            host: config.mailingServiceHost,
-            port: config.mailingServicePort,
+        .use('seneca-amqp-transport', {
+            amqp: {
+                url: config.amqpServiceHost
+            }
+        })
+        .client({
+            type: 'amqp',
             pin: 'role:mail'
-        });*/
+        });
+    /*.use('mesh', { auto:true, pin:'role:auth' });
+    .client({
+        type: 'tcp',
+        host: config.mailingServiceHost,
+        port: config.mailingServicePort,
+        pin: 'role:mail'
+    });*/
 });
 
 //registering view plugin

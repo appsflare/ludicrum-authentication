@@ -27,6 +27,7 @@
     "kingkong": "^1.1.0",
     "mongoose": "^4.3.6",
     "seneca": "^1.0.0",
+    "seneca-amqp-transport": "^0.1.1",
     "seneca-balance-client": "^0.2.0",
     "seneca-mesh": "^0.3.0",
     "underscore": "^1.8.3",
