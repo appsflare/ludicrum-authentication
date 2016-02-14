@@ -7,17 +7,17 @@ ENV APP_DIR_NAME=ludicrum-authentication-master
 ENV WORK_DIR=/srv/www/
 ## ENV NODE_ENV
 
-RUN echo "Node version ${NODE_VERSION}"
-
-RUN curl "https://deb.nodesource.com/node_4.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1~trusty1_amd64.deb" > node.deb \
- && dpkg -i node.deb \
- && rm node.deb;
-
 ##RUN apt-get install build-essential libavahi-compat-libdnssd-dev
 RUN apt-get update \
     && apt-get install curl -y --force-yes \
     && apt-get install wget -y --force-yes \
     && apt-get install unzip -y --force-yes;
+
+RUN echo "Node version ${NODE_VERSION}"
+
+RUN curl "https://deb.nodesource.com/node_4.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1~trusty1_amd64.deb" > node.deb \
+ && dpkg -i node.deb \
+ && rm node.deb;
 
 ##RUN npm install -g node-gyp\
 ## && npm cache clear\
