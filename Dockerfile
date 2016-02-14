@@ -1,8 +1,8 @@
 FROM node:4.3.0
 MAINTAINER Srinath Janakiraman <me@vjsrinath.com>
 
-ENV SERVICE_VERSION_MAJOR=1.0
-ENV SERVICE_VERSION_MINOR=1.0.2
+ENV VERSION=1.0.2
+
 ENV WORK_DIR=/srv/www/ludicrum-authentication
 ENV PORT=4000
 ## ENV NODE_ENV
@@ -21,11 +21,11 @@ RUN mkdir -p ${WORK_DIR};
 WORKDIR ${WORK_DIR}
 
 ##Copy package file to working directory
-ONBUILD COPY package.json /srv/www/ludicrum-authentication/
+COPY ["package.json" "./"]
 ##Instal dependencies defined in package file
-ONBUILD npm install
+RUN npm install
 ##Copy rest of the files to working directory
-ONBUILD COPY . /srv/www/ludicrum-authentication/
+COPY [".", "./"]
 
 ##Set the entry point to pm2
 ENTRYPOINT ["pm2"]
