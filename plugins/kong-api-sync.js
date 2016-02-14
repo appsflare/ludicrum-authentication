@@ -11,10 +11,9 @@ function getAllNetworkAddresses() {
     let ifaces = os.networkInterfaces();
 
     return _.chain(Object.keys(ifaces))
-        .map((name)=> ifaces[name])
-        .reduceRight((a, b)=>a.concat(b))
-        .filter(face =>'IPv4' === face.family)
-        .map(face=> face.address)
+        .map((name) => ifaces[name])
+        .reduceRight((a, b) => a.concat(b))
+        .filter(face => 'IPv4' === face.family)
         .value();
 }
 
@@ -22,16 +21,9 @@ function getNetworkAddress(internal) {
 
     let address = '127.0.0.1';
 
-    _.find(getAllNetworkAddresses(), faces => {
-        var found = faces.find(face => face.internal == internal);
-        if (found !== undefined) {
-            address = found.address;
-            return true;
-        }
-        return false;
-    });
+    let face = _.find(getAllNetworkAddresses(), face => face.internal == internal);
 
-    return address || '127.0.0.1';
+    return face ? face.address : '127.0.0.1';
 }
 
 
@@ -39,28 +31,33 @@ function KongHelpers(client) {
     this.client = client;
 }
 
-KongHelpers.prototype.getCustomer = function (id) {
+KongHelpers.prototype.getCustomer = function(id) {
     return this.client.get('customer', id);
 };
 
 function kongAPISyncPlugin(server, options, next) {
 
+    let port = server.connections[0].settings.port;
     if (!options.upstream_url) {
         if (!options.baseUrlResolver) {
-            options.baseUrlResolver = function () {
-
+            options.baseUrlResolver = function() {
+                return 'http://localhost:' + port;
             };
         }
-        options.upstream_url = 'http://' + getNetworkAddress(false) + ':' + (server.connections[0].settings.port || 3000);
+        options.upstream_url = 'http://' + getNetworkAddress(false) + ':' + (port || 3000);
     }
 
+    /*
+     *TODO: Need to find better logic to generate api
+     *list from registered routes
+     */
     if (options.generateApis) {
 
 
         var registeredRoutes = server.table();
 
         let routes = _.chain(registeredRoutes)
-            .map(i=> {
+            .map(i => {
                 return {
                     name: i.path.split('/')[0],
                     request_path: i.request_path,
@@ -73,7 +70,7 @@ function kongAPISyncPlugin(server, options, next) {
 
     }
 
-    options.apis.forEach(i=> {
+    options.apis.forEach(i => {
         if (!i.upstream_url) {
             i.upstream_url = options.upstream_url;
         }
@@ -82,7 +79,7 @@ function kongAPISyncPlugin(server, options, next) {
 
     const existingOnSync = options.onSync;
 
-    options.onSync = ()=> {
+    options.onSync = () => {
 
         next();
 
@@ -97,17 +94,12 @@ function kongAPISyncPlugin(server, options, next) {
 
 }
 
-exports.forEachInterface = function (callback) {
-    getAllNetworkAddresses().forEach(callback);
-};
+// exports.forEachInterface = function(callback) {
+//     getAllNetworkAddresses().forEach(callback);
+// };
 
-exports.getPlugin = function (name) {
-    let plugin = function () {
-        return kongAPISyncPlugin.apply(this, arguments);
-    };
-    plugin.attributes = {
-        name: name || 'kong-api-sync',
-        version: '1.0.0'
-    };
-    return plugin;
+exports.register = kongAPISyncPlugin;
+exports.register.attributes = {
+    name: 'kong-api-sync',
+    version: '1.0.0'
 };
