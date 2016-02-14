@@ -21,8 +21,8 @@ RUN mkdir -p ${WORK_DIR};
 WORKDIR ${WORK_DIR}
 
 ##Copy package file to working directory
-COPY ["package.json" "./"]
-##Instal dependencies defined in package file
+COPY package.json ./
+##Install dependencies defined in package file
 RUN npm install
 ##Copy rest of the files to working directory
 COPY [".", "./"]
