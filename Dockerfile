@@ -15,6 +15,7 @@ RUN curl "https://deb.nodesource.com/node_4.x/pool/main/n/nodejs/nodejs_$NODE_VE
 
 ##RUN apt-get install build-essential libavahi-compat-libdnssd-dev
 RUN apt-get update \
+    && apt-get install curl -y --force-yes \
     && apt-get install wget -y --force-yes \
     && apt-get install unzip -y --force-yes;
 
