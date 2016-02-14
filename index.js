@@ -5,7 +5,6 @@
 'use strict';
 
 
-
 const config = require('./config');
 
 const Hapi = require('hapi');
@@ -24,7 +23,9 @@ server.connection({
     port: config.port
 });
 
-server.register(chairo, err => {
+server.register({
+    register: chairo
+}, err => {
     if (err) {
         return;
     }
@@ -39,12 +40,12 @@ server.register(chairo, err => {
             pin: 'role:mail'
         });
     /*.use('mesh', { auto:true, pin:'role:auth' });
-    .client({
-        type: 'tcp',
-        host: config.mailingServiceHost,
-        port: config.mailingServicePort,
-        pin: 'role:mail'
-    });*/
+     .client({
+     type: 'tcp',
+     host: config.mailingServiceHost,
+     port: config.mailingServicePort,
+     pin: 'role:mail'
+     });*/
 });
 
 //registering view plugin
@@ -65,7 +66,7 @@ server.register(Vision, (err) => {
     server.route({
         method: 'GET',
         path: '/ping',
-        handler: function(request, reply) {
+        handler: function (request, reply) {
             reply('pong');
         }
     });
@@ -82,7 +83,7 @@ server.register(Vision, (err) => {
                 request_path: '/authentication/'
             }]
         }
-    }, function(err, next) {
+    }, function (err, next) {
 
         if (err) {
             console.info("synchronizing upstream url with kong failed, " + err);
