@@ -1,13 +1,14 @@
 'use strict'
 
+//noinspection JSUnresolvedFunction
 const AccountModel = require("../model/Account");
 
-exports.use = function(server) {
+exports.use = function (server) {
 
     server.route({
         method: 'GET',
         path: '/',
-        handler: function(request, reply) {
+        handler: function (request, reply) {
             reply.view('register', {
                 title: 'Welcome to ludicrum',
                 errors: [],
@@ -27,7 +28,7 @@ exports.use = function(server) {
     server.route({
         method: 'GET',
         path: '/register',
-        handler: function(request, reply) {
+        handler: function (request, reply) {
             //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             reply.view('register', {
                 title: 'Welcome to ludicrum',
@@ -47,49 +48,48 @@ exports.use = function(server) {
     server.route({
         method: 'POST',
         path: '/register',
-        handler: function(request, reply) {
+        handler: function (request, reply) {
             //reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
             let input = request.payload;
             let errors = [];
 
-            Promise.all([AccountModel.findOne({
-                        username: input.username.toLowerCase()
-                    })
-                    .then(account => {
-                        //if account already exists, then throw exception saying username is already taken
-                        if (account) {
-                            return Promise.reject(new Error('Username already taken.'));
-                        }
+            AccountModel.findOne({
+                    username: input.username.toLowerCase()
+                })
+                .then(account => {
+                    //if account already exists, then throw exception saying username is already taken
+                    if (account) {
+                        return Promise.reject(new Error('Username already taken.'));
+                    }
 
-                        var model = new AccountModel(input);
+                    var model = new AccountModel(input);
 
-                        return model
-                            .save()
-                            .then(newAcc => {
+                    return model
+                        .save()
+                        .then(newAcc => {
 
-                                server
-                                    .seneca
-                                    .act({
-                                        role: 'mail',
-                                        cmd: 'send',
-                                        from: 'postmaster@appsflare.com',
-                                        to: input.email,
-                                        subject: 'Welcome to ludicrum!!!',
-                                        html: '<br> Sit tight while we setup your account for <i>awesome<i> media experience on the web'
-                                    }, (err => {
-                                        console.log(err);
-                                    }));
+                            server
+                                .seneca
+                                .act({
+                                    role: 'mail',
+                                    cmd: 'send',
+                                    from: 'postmaster@appsflare.com',
+                                    to: input.email
+                                }, (err=> {
+                                    console.log(err);
+                                }));
 
-                                reply.view('register', {
-                                    title: 'Welcome to ludicrum',
-                                    messages: ["Account created successfully"],
-                                    errors: errors,
-                                    model: input
-                                });
+                            reply.view('register', {
+                                title: 'Welcome to ludicrum',
+                                messages: ["Account created successfully"],
+                                errors: errors,
+                                model: input
                             });
 
-                    })
-                ])
+                            return Promise.resolve(newAcc)
+                        });
+
+                })
                 .catch(e => {
                     errors.push(e.message);
                     reply.view('register', {
@@ -98,7 +98,6 @@ exports.use = function(server) {
                         model: input
                     });
                 });
-
 
 
         }

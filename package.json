@@ -1,6 +1,6 @@
 {
   "name": "ludicrum-authentication",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ludicrum authentication layer to support various authentication mechanisms",
   "main": "index.js",
   "scripts": {
