@@ -1,4 +1,4 @@
-FROM risingstack/alpine:3.3-v4.3.0-1.1.3
+FROM risingstack/alpine:3.3-v4.2.6-1.1.3
 MAINTAINER Srinath Janakiraman <me@vjsrinath.com>
 
 ENV VERSION=1.0.3
