@@ -1,4 +1,4 @@
-FROM risingstack/alpine:3.3-v4.2.6-1.1.3
+FROM node:4.3.0
 MAINTAINER Srinath Janakiraman <me@vjsrinath.com>
 
 ENV VERSION=1.0.3
@@ -28,6 +28,6 @@ RUN npm install
 COPY [".", "./"]
 
 ##Set the entry point to pm2
-ENTRYPOINT ["pm2"]
+##ENTRYPOINT ["pm2"]
 ##Set the arguments to be passed to the entrypoint
-CMD ["start", "index.js"]
+CMD ["node", "index.js"]
