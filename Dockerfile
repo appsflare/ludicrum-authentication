@@ -27,7 +27,7 @@ RUN npm install
 ##Copy rest of the files to working directory
 COPY [".", "./"]
 
-##Set the entry point to pm2
-##ENTRYPOINT ["pm2"]
+##Set the entry point to node
+ENTRYPOINT ["node"]
 ##Set the arguments to be passed to the entrypoint
-CMD ["node", "index.js"]
+CMD ["index.js"]
