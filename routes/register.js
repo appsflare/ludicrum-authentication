@@ -49,6 +49,20 @@ exports.use = function (server) {
                         .save()
                         .then(newAcc => {
 
+
+                            server
+                                .seneca
+                                .act({
+                                    role: 'users',
+                                    cmd: 'create',
+                                    user: {
+                                        email: input.email,
+                                        password: input.password
+                                    }
+                                }, (err=> {
+                                    console.log(err);
+                                }));
+
                             server
                                 .seneca
                                 .act({

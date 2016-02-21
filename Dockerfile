@@ -4,6 +4,9 @@ MAINTAINER Srinath Janakiraman <me@vjsrinath.com>
 ENV VERSION=1.0.4
 
 ENV WORK_DIR=/srv/www/ludicrum-authentication
+ENV DB=mongodb://mongodb:27017/ludicrum
+ENV AMQP_SERVICE_HOST
+ENV GATEWAY_HOSTS
 ENV PORT=4000
 ## ENV NODE_ENV
 
