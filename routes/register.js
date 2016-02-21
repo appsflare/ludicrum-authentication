@@ -5,25 +5,6 @@ const AccountModel = require("../model/Account");
 
 exports.use = function (server) {
 
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: function (request, reply) {
-            reply.view('register', {
-                title: 'Welcome to ludicrum',
-                errors: [],
-                messages: [],
-                model: {
-                    username: '',
-                    password: '',
-                    email: '',
-                    firstName: '',
-                    lastName: ''
-                }
-            });
-        }
-    });
-
 
     server.route({
         method: 'GET',

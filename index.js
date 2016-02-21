@@ -4,7 +4,6 @@
 
 'use strict';
 
-
 const config = require('./config');
 
 const Hapi = require('hapi');
@@ -12,9 +11,15 @@ const Vision = require('vision');
 const Ejs = require('ejs');
 const Good = require('good');
 const chairo = require('chairo');
+const inert = require('inert');
 //const _ = require('underscore');
 const KongApiSyncPlugin = require('./plugins/kong-api-sync');
+
+const StaticRoutes = require("./routes/static");
+const DefaultRoutes = require("./routes/default");
+const LoginRoutes = require("./routes/login");
 const RegisterRoutes = require("./routes/register");
+
 
 const server = new Hapi.Server();
 
@@ -60,7 +65,8 @@ server.register(Vision, (err) => {
             ejs: Ejs
         },
         relativeTo: __dirname,
-        path: 'views'
+        path: 'views',
+        layout: true
     });
 
     server.route({
@@ -70,6 +76,12 @@ server.register(Vision, (err) => {
             reply('pong');
         }
     });
+
+    StaticRoutes.use(server);
+
+    DefaultRoutes.use(server);
+
+    LoginRoutes.use(server);
 
     RegisterRoutes.use(server);
 
